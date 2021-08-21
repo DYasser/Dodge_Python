@@ -72,7 +72,7 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.acc = vec(0,PLAYER_GRAV)
         keys = pg.key.get_pressed()
-            #what happens if the player press buttons
+            #Player movement
         if keys[pg.K_LEFT]:
             self.acc.x = -PLAYER_ACC
             Player_img = pg.transform.scale(pg.image.load(path.join(img_dir, "king_left.png")).convert(),(P_width,P_height))
@@ -86,7 +86,7 @@ class Player(pg.sprite.Sprite):
         self.acc.x += self.vel.x * PLAYER_FRICTION
         self.vel += self.acc
         self.pos += self.vel + 0.5 *self.acc
-            #Block the player and doesn't let him go out of the screen
+            #Block the player not go out of screen
         if self.rect.right >= WIDTH :
             self.pos.x = WIDTH-(P_width/2)-1
         elif self.rect.left <= 0:
@@ -143,7 +143,7 @@ class Ennemies(pg.sprite.Sprite):
             self.last = now
             self.rot = (self.rot + self.rot_speed) % 360
             self.image = pg.transform.rotate(self.imageF, self.rot)
-            #Helps to manipulate the rotation and makes it look natural
+            #rotation made look natural
             old_center = self.rect.center
             self.rect = self.image.get_rect()
             self.rect.center = old_center
@@ -165,7 +165,7 @@ class Mobs(pg.sprite.Sprite):
     def update(self):
         self.now = pg.time.get_ticks()
         self.rect.x += self.vel
-            #Changes the direction if touches the limit of the map, and change image.
+            #Change direction if touches the map limit, change image.
         if self.rect.right >= WIDTH+1 or self.rect.left <= 0:
             self.vel = -self.vel
             if self.vel < 0:
@@ -212,7 +212,7 @@ def print_text(surf, text, size, x, y):
     surf.blit(text_surface, text_rect)
 class Game:
     def __init__(self):
-        # initialize game window, etc
+        # initialize game settings
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH,HEIGHT))
@@ -232,7 +232,7 @@ class Game:
             except:
                 self.highscore = 0
     def new(self):
-        # Defining all the variables and commands we need in the initialisation of a game
+        # variables needed at initialisation 
         self.running = True
         self.fullscreen = False
         self.rand = 0
@@ -278,7 +278,7 @@ class Game:
             self.platforms.add(p)
         self.run()
     def run(self):
-                # Game Loop, Every time the player re-plays
+                # Game Loop
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
@@ -287,14 +287,14 @@ class Game:
                 self.update()
             self.draw()
     def update(self):
-                    #Generates a coin
+                    # Generate coin
         self.now = pg.time.get_ticks()
         self.time = self.now - self.start
         if int(self.time) % 500 == 0:
             coin = Coins()
             self.coins.add(coin)
             self.all_sprites.add(coin)
-                    #Generates a shield
+                    # Generate shield
         self.now = pg.time.get_ticks()
         self.time = self.now - self.start
         if int(self.time) % 900 == 0:
@@ -311,7 +311,7 @@ class Game:
                 self.player.pos = (WIDTH- P_width, HEIGHT/4)
             if self.rand % 2 == 1:
                 self.player.pos = (P_width+1, HEIGHT/4)
-                    #If an ennemy goes off the screen
+                    # if an ennemy goes off the screen
         for ennemy in self.ennemies:
             if ennemy.rect.left > WIDTH or ennemy.rect.right < 0:
                 self.score += 10
@@ -319,7 +319,7 @@ class Game:
                 n = Ennemies()
                 self.all_sprites.add(n)
                 self.ennemies.add(n)
-                    #Verifies if the player hits an ennemy
+                    # if the player hits an ennemy
         hits = pg.sprite.spritecollide(self.player, self.ennemies,False, pg.sprite.collide_circle)
         for hit in hits:
             player_dmg_snd = pg.mixer.Sound(path.join(snd_dir, "Hit_Hurt3.wav"))
@@ -334,7 +334,7 @@ class Game:
             self.all_sprites.add(hit)
             self.ennemies.add(hit)
             self.health -= 30
-                #If the player got no more HPs: show game over screen!
+                # if the player 0 HPs, show game over screen
             if self.health <= 0:
                 g.show_go_screen()
         if self.player.vel.y > 0:
@@ -342,20 +342,20 @@ class Game:
             if hits:
                 self.player.pos.y = hits[0].rect.top
                 self.player.vel.y = 0
-                            #Verifies if an ennemy hits a platform: kill it.
+                            # if an ennemy hits a platform, kill it.
         hits = pg.sprite.groupcollide(self.platforms,self.ennemies, False, True)
         for hit in hits:
             self.score += 5
             n = Ennemies()
             self.all_sprites.add(n)
             self.ennemies.add(n)
-                            #Verifies if the player hit a coin
+                            # if the player hits a coin
         hits = pg.sprite.spritecollide(self.player, self.coins, True)
         for hit in hits:
             Coin = pg.mixer.Sound(path.join(snd_dir, "Pickup_Coin.wav"))
             Coin.play()
             self.score += 100
-                            #Verifies if the player hit a Shield
+                            # if the player hits a Shield
         hits = pg.sprite.spritecollide(self.player, self.shields, True)
         for hit in hits:
             Shield_snd = pg.mixer.Sound(path.join(snd_dir, "Pickup_Shield.wav"))
@@ -401,7 +401,7 @@ class Game:
         print_text(self.screen, "Score: "+str(self.score), 22, WIDTH/2, 15)
         print_text(self.screen, "Time: "+str(int(self.time/1000))+"s",22, WIDTH/2,40)
         draw_health(self.screen, 10, 10, self.health)
-        # *after* drawing everything, flip the display
+        # show new display
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))
             print_text(self.screen,"Paused", 105, WIDTH / 2, HEIGHT / 2 - 50)

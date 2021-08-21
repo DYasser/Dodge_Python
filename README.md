@@ -1,5 +1,5 @@
 # Dodge_Python
-A simple but complex game where the player needs to stay alive as long as possible by dodging all enemies. The game becomes hard as time goes by, by itself.
+A simple, yet complex game where the player needs to stay alive as long as possible by dodging all enemies. Dodging and staying alive gets harder as time goes by.
 
 Here are some displays of the game:
 
